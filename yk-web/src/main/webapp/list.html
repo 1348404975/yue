@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	
+	<script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/css.css">
+	<script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+	<!-- 分页组件开始 -->
+<script src="../plugins/angularjs/pagination.js"></script>
+<link rel="stylesheet" href="../plugins/angularjs/pagination.css">
+<!-- 分页组件结束 -->
+	<script type="text/javascript">
+		var app=angular.module("myApp",['pagination']);
+		app.controller("classController",function($scope,$http){
+			$scope.paginationConf = {
+					 currentPage: 1,
+					 totalItems: 10,
+					 itemsPerPage: 2,
+					 perPageOptions: [2, 10, 20, 30, 40, 50],
+					 onChange: function(){
+					        	 $scope.reloadList();//重新加载
+					 }
+			}; 
+			 $scope.reloadList=function(){
+				 $scope.findList($scope.paginationConf.currentPage,$scope.paginationConf.itemsPerPage)
+			 }
+			$scope.findList=function(page,size){
+				$http.get("../class/list.do?page="+page+'&size='+size).success(function(a){
+					console.log(a);
+					$scope.list=a.rows;
+					$scope.paginationConf.totalItems=a.total;
+				})
+			}
+			$scope.add=function(){
+				location.href="/add.html";
+			}
+			$scope.shang=function(id){
+				$http.get("../class/shang.do?id="+id).success(function(a){
+					if(a>0){
+						alert("上架成功");
+						$scope.reloadList();
+					}else{
+						alert("上架失败");
+					}
+				})
+			}
+			$scope.xia=function(id){
+				$http.get("../class/xia.do?id="+id).success(function(a){
+					if(a>0){
+						alert("下架成功");
+						$scope.reloadList();
+					}else{
+						alert("下架失败");
+					}
+				})
+			}
+		})
+	</script>
+	<body ng-app="myApp" ng-controller="classController" ng-init="reloadList()">
+	<h1>课程列表</h1>
+	<input type="button" value="添加" ng-click="add()">
+		<table>
+			<tr>
+				<td>课程编号</td>
+				<td>课程名称</td>
+				<td>课程类别</td>
+				<td>课程课时</td>
+				<td>讲课老师</td>
+				<td>课程图片</td>
+				<td>开课日期</td>
+				<td>状态</td>
+				<td>操作</td>
+			</tr>
+			<tr ng-repeat="x in list">
+				<td>{{x.id}}</td>
+				<td>{{x.name}}</td>
+				<td>{{x.lb}}</td>
+				<td>{{x.ks}}</td>
+				<td>{{x.ls}}</td>
+				<td>
+					<img width="100px" height="100px" src="{{x.img}}">
+				</td>
+				<td>{{x.date}}</td>
+				<td ng-if="x.falg==0">未发布</td>
+				<td ng-if="x.falg==1">已发布</td>
+				<td ng-if="x.falg==0">
+					<input type="button" value="上架" ng-click="shang(x.id)">
+				</td>
+				<td ng-if="x.falg==1">
+					<input type="button" value="下架" ng-click="xia(x.id)">
+					<a href="http://localhost:9106/{{x.id}}.html">详情</a>
+				</td>
+			</tr>
+		</table>
+		<!-- 分页 -->
+	<tm-pagination conf="paginationConf"></tm-pagination>
+	</body>
+</html>

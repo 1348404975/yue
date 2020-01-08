@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	
+	<script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/css.css">
+	<script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+	<script type="text/javascript">
+	var app=angular.module("myApp",[]);
+	app.controller("classController",function($scope,$http){
+		$scope.findList=function(page,size){
+			$http.get("../user/findName.do").success(function(a){
+				console.log(a);
+				if(a.falg==0){
+					location.href="/ding.html";
+				}else{
+					location.href="/list.html";
+				}
+			})
+		}
+	})
+	</script>
+	<body ng-app="myApp" ng-controller="classController" ng-init="findList()">
+	
+	</body>
+</html>

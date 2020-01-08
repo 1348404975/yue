@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Insert title here</title>
+	</head>
+	
+	<script type="text/javascript" src="/js/jquery-1.8.3.js"></script>
+	<script type="text/javascript" src="/My97DatePicker/WdatePicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/css.css">
+	<script type="text/javascript" src="plugins/angularjs/angular.min.js"></script>
+	<script type="text/javascript">
+	var app=angular.module("myApp",[]);
+	app.controller("addController",function($scope,$http){
+		$scope.entity={};
+		$scope.add=function(){
+			$http.post("../class/add.do",$scope.entity).success(function(a){
+				if(a>0){
+					alert("添加成功");
+					location.href="../list.html";
+				}else{
+					alert("添加失败");
+				}
+			})
+		}
+		//上传文件
+		$scope.uploadFile=function(){
+				var formData=new FormData();
+				formData.append("file",file.files[0]);   
+				return $http({
+		            method:'POST',
+		            url:"../upload.do",
+		            data: formData,
+		            headers: {'Content-Type':undefined},
+		            transformRequest: angular.identity
+		        }).success(function(a) {        	
+	        	if(a.flag){//如果上传成功，取出url
+	        		alert("上传成功");
+	        		$scope.entity.img=a.message;//设置文件地址
+	        	}else{
+	        		alert(a.message);
+	        	}
+	        })        
+	    } 
+	})
+	</script>
+	<body ng-app="myApp" ng-controller="addController">
+		<h1>课程管理</h1>
+		<table>
+			<tr>
+				<td>课程名称</td>
+				<td>
+					<input type="text" ng-model="entity.name">
+				</td>
+			</tr>
+			<tr>
+				<td>课程类别</td>
+				<td>
+					<input type="text" ng-model="entity.lb">
+				</td>
+			</tr>
+			<tr>
+				<td>课时</td>
+				<td>
+					<input type="text" ng-model="entity.ks">
+				</td>
+			</tr>
+			<tr>
+				<td>讲课老师</td>
+				<td>
+					<input type="text" ng-model="entity.ls">
+				</td>
+			</tr>
+			<tr>
+				<td>课程图片</td>
+				<td>
+					<input type="file" id="file">
+					<input type="button" value="上传" ng-click="uploadFile()">
+					<img width="100px" height="100px" ng-src="{{entity.img}}">
+				</td>
+			</tr>
+			<tr>
+				<td>开课日期</td>
+				<td>
+					<input type="text" ng-model="entity.date">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<input type="button" value="添加" ng-click="add()">
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

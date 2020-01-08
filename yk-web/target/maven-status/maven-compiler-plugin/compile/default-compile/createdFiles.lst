@@ -1,0 +1,5 @@
+com\yk\controller\ClassController.class
+com\yk\controller\DingController.class
+com\yk\controller\UserController.class
+com\yk\controller\UploadController.class
+com\yk\server\UserDetaService.class
